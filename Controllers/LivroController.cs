@@ -19,7 +19,7 @@ namespace Bibliotec_mvc.Controllers
         {
             _logger = logger;
         }
-        Context context = new Context(); 
+        Context context = new Context();
         public IActionResult Index()
         {
             ViewBag.Ad = HttpContext.Session.GetString("Admin")!;
@@ -39,30 +39,45 @@ namespace Bibliotec_mvc.Controllers
         [Route("Cadastro")]
 
         // Método que retorna a tela de cadastro:
-
-        public IActionResult Cadastro() {
-
+        public IActionResult Cadastro()
+        {
             ViewBag.Ad = HttpContext.Session.GetString("Admin")!;
             ViewBag.Categorias = context.Categoria.ToList();
             return View();
         }
 
-        // M]etodo para cadastrar um livro:
-        [Route("Cadastrar")] 
-        public IActionResult Cadastrar(IFormCollection form) {
+        // Mtodo para cadastrar um livro:
+        [Route("Cadastrar")]
+        public IActionResult Cadastrar(IFormCollection form)
+        {
             Livro novoLivro = new Livro();
 
             // O que meu usúario escrever no formulário será atribuido ao novoLivro
             novoLivro.Nome = form["Nome"].ToString();
-            novoLivro.Descricao = form["Descricao"].ToString(); 
+            novoLivro.Descricao = form["Descricao"].ToString();
             novoLivro.Escritor = form["Escritor"].ToString();
             novoLivro.Editora = form["Editora"].ToString();
             novoLivro.Idioma = form["Idioma"].ToString();
-        
             // img
             context.Livro.Add(novoLivro);
+            context.SaveChanges();
+
+            List<LivroCategoria> listaLivroCategorias = new List<LivroCategoria>();
+
+            string[] categoriasSelecionadas = form["Categoria"].ToString().Split("'");
+            foreach (string categoria in categoriasSelecionadas)
+            {
+                LivroCategoria livroCategoria = new LivroCategoria();
+
+                livroCategoria.CategoriaID = int.Parse(categoria);
+                livroCategoria.LivroID = novoLivro.LivroID;
+                listaLivroCategorias.Add(livroCategoria);
+            }
+
+            context.LivroCategoria.AddRange();
 
             context.SaveChanges();
+            return LocalRedirect("/Cadastro");
         }
 
         // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
