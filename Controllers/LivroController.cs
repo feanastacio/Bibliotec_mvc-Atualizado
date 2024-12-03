@@ -58,7 +58,33 @@ namespace Bibliotec_mvc.Controllers
             novoLivro.Escritor = form["Escritor"].ToString();
             novoLivro.Editora = form["Editora"].ToString();
             novoLivro.Idioma = form["Idioma"].ToString();
-            // img
+            //  Trabalhando com img
+
+            if(form.Files.Count > 0) {
+                // Primeiro passo:
+                    // Armazenaremos o arquivo/foto enviado pelo usúario
+                    var arquivo = form.Files[0];
+
+                // Segundo passo:
+                    // Criar variavel do caminho  da minha pasta para colocar as fotos dos livros
+                    var pasta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/Livros");
+                    // Validaremos se a pasta que  será armazenada as imagens, existe. Caso não exista, criaremos uma nova pasta
+                    if(!Directory.Exists(pasta)) {
+                        // Criar pasta:
+                        Directory.CreateDirectory(pasta);
+                    }
+                // Terceiro passo:
+                    // Criar a variavel para armanezar o caminho em que meu arquivo estará além do nome dele
+                    var caminho = Path.Combine(pasta, arquivo.FileName);
+                    using (var stream = new FileStream(caminho, FileMode.Create)) {
+                        // Copiou o arquivo para o meu diretório
+                        arquivo.CopyTo(stream);
+                    }
+
+                    novoLivro.Imagem = arquivo.FileName;
+            }else{
+                    novoLivro.Imagem = "padrao.png";
+            }
             context.Livro.Add(novoLivro);
             context.SaveChanges();
 
@@ -77,7 +103,7 @@ namespace Bibliotec_mvc.Controllers
             context.LivroCategoria.AddRange();
 
             context.SaveChanges();
-            return LocalRedirect("/Cadastro");
+            return LocalRedirect("/Livro/Cadastro");
         }
 
         // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
