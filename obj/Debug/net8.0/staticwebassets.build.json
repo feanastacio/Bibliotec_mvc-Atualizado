@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "aOGXqiXtak4T2+40DNxChC25xsoQ1JJnY+O1KOdBxMk=",
+  "Hash": "cH4TBCAIfR0SPcLiHtNpN/159iQZdduFkpTdfNmemGw=",
   "Source": "Bibliotec",
   "BasePath": "_content/Bibliotec",
   "Mode": "Default",
@@ -699,6 +699,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\livro4.png"
+    },
+    {
+      "Identity": "C:\\Users\\50776884867\\Desktop\\Bibliotec mvc atualizada\\Bibliotec_mvc\\wwwroot\\images\\Livros\\capa diario de um banana.jpg",
+      "SourceId": "Bibliotec",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\50776884867\\Desktop\\Bibliotec mvc atualizada\\Bibliotec_mvc\\wwwroot\\",
+      "BasePath": "_content/Bibliotec",
+      "RelativePath": "images/Livros/capa diario de um banana.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\Livros\\capa diario de um banana.jpg"
     },
     {
       "Identity": "C:\\Users\\50776884867\\Desktop\\Bibliotec mvc atualizada\\Bibliotec_mvc\\wwwroot\\images\\login-bk-desktop.png",

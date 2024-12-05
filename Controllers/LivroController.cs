@@ -106,6 +106,79 @@ namespace Bibliotec_mvc.Controllers
             return LocalRedirect("/Livro/Cadastro");
         }
 
+        [Route("Editar/{id}")]
+        public IActionResult Editar(int id){
+            ViewBag.Ad = HttpContext.Session.GetString("Admin")!;
+            ViewBag.CategoriasDoSistema = context.Categoria.ToList();
+            // LivroID = 3
+            
+            // Buscar quemmé otal do livro 3
+            Livro livroAtualizado = context.Livro.First(livro => livro.LivroID == id);
+            // Buscar as categorias que o livroAtualizado possui
+            var categoriasDolivroAtualizado = context.LivroCategoria.Where(identificadorLivro => identificadorLivro.LivroID == id).Select(livro => livro.Categoria).ToList();
+
+            ViewBag.Livro = livroAtualizado;
+            ViewBag.CAtegoria = categoriasDolivroAtualizado;
+
+            return View();
+        }
+        [Route("Atualizar")]
+        public IActionResult Atualizar(IFormCollection form, int id, IFormFile imagem){
+            Livro livroAtualizado = context.Livro.FirstOrDefault(livro => livro.LivroID == id)!;
+
+            livroAtualizado.Nome = form["Nome"];
+            livroAtualizado.Escritor = form["Escritor"];
+            livroAtualizado.Editora = form["Editora"];
+            livroAtualizado.Idioma = form["Idioma"];
+            livroAtualizado.Descricao = form["Descricao"];
+
+            // Upload imagem
+            if (imagem.Length > 0){
+                // Definiremos o caminho da imagem do livro atual, que eu quero atuar
+                var caminhoImagem = Path.Combine("wwwroot/imagens/Livros", imagem.FileName);
+
+                // Verificar se o usúariomclocou uma imagem para atualizar o livro
+                if (string.IsNullOrEmpty(livroAtualizado.Imagem)){
+                    // Caso exista, ela irá ser apagada
+                    var caminhoImagemAntiga = Path.Combine("wwwroot/imagens/Livros", livroAtualizado.Imagem);
+                    if (System.IO.File.Exists(caminhoImagemAntiga)){
+                        System.IO.File.Delete(caminhoImagemAntiga);
+                    }
+                }
+                    // Salvar imagem nova
+                    using (var stream = new FileStream(caminhoImagem, FileMode. Create)){
+                        imagem.CopyTo(stream);
+                    }
+                // Subir essa mudança para o meu banco de dados
+                livroAtualizado.Imagem = imagem.FileName;
+            }
+
+                // Categorias:
+                var categoriasSelecionadas = form["Categoria"].ToList();
+                var categoriasAtuais = context.LivroCategoria.Where(livro => livro.LivroID == id);
+                foreach (var categoria in categoriasAtuais){
+                    if (!categoriasSelecionadas.Contains(categoria.CategoriaID.ToString())){
+                        // Nós vamos resolver a categoria do nosso context
+                        context.LivroCategoria.Remove(categoria);
+                    }
+                    
+                }
+
+                foreach(var categoria in categoriasSelecionadas){
+                    // Verificando se não(!) existe a categoria nesse livro
+                    if (!categoriasAtuais.Any(c => c.CategoriaID.ToString() == categoria)){
+                        context.LivroCategoria.Add(new LivroCategoria {
+                            LivroID = id,
+                            CategoriaID = int.Parse(categoria)
+                        });
+
+                    }
+                }
+
+                context.SaveChanges();
+                return LocalRedirect("/Livro");
+        }
+        
         // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         // public IActionResult Error()
         // { 
