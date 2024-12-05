@@ -122,7 +122,7 @@ namespace Bibliotec_mvc.Controllers
 
             return View();
         }
-        [Route("Atualizar")]
+        [Route("Atualizar/{id}")]
         public IActionResult Atualizar(IFormCollection form, int id, IFormFile imagem){
             Livro livroAtualizado = context.Livro.FirstOrDefault(livro => livro.LivroID == id)!;
 
@@ -133,7 +133,7 @@ namespace Bibliotec_mvc.Controllers
             livroAtualizado.Descricao = form["Descricao"];
 
             // Upload imagem
-            if (imagem.Length > 0){
+            if (imagem != null && imagem.Length > 0){
                 // Definiremos o caminho da imagem do livro atual, que eu quero atuar
                 var caminhoImagem = Path.Combine("wwwroot/imagens/Livros", imagem.FileName);
 
@@ -171,12 +171,29 @@ namespace Bibliotec_mvc.Controllers
                             LivroID = id,
                             CategoriaID = int.Parse(categoria)
                         });
-
                     }
                 }
 
                 context.SaveChanges();
                 return LocalRedirect("/Livro");
+        }
+
+        // Metódo de excluir o livro
+        [Route ("Excluir/{id}")]
+        public IActionResult Excluir(int id){
+            // Buscar qual o livro do id que precisamos excluir
+            Livro livroEncontrado = context.Livro.First(livro => livro.LivroID == id);
+
+            // Buscar as categorias desse livro:
+            var categoriasDoLivro = context.LivroCategoria.Where(livro => livro.LivroID == id).ToList();
+
+            foreach(var categoria in categoriasDoLivro){
+                context.LivroCategoria.Remove(categoria);
+            }
+
+            context.Livro.Remove(livroEncontrado);
+            context.SaveChanges();
+            return LocalRedirect("/Livro");
         }
         
         // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
